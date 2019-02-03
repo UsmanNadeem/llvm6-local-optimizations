@@ -1,11 +1,9 @@
 // 5984 S18 Assignment 1: FunctionInfo.cpp
-// PID:
+// PID: usman
 ////////////////////////////////////////////////////////////////////////////////
 
 // Source: http://www.cs.cmu.edu/~15745/15745_assignment1/code/FunctionInfo/FunctionInfo.cpp
 
-// for opcodes
-// #include "llvm-c/Core.h"
 #include "unordered_map"
 #include "llvm/Pass.h"
 #include "llvm/IR/Function.h"
@@ -78,7 +76,8 @@ namespace {
       return false;
     }
 
-    // Print output for each function
+    // Calculate output values for each function
+    // Print them in doFinalization
     bool runOnFunction(Function &F) override {
 
       std::string fName = F.getName();
