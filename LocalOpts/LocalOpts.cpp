@@ -16,7 +16,9 @@ namespace {
   class LocalOpts : public BasicBlockPass {
   public:
     static char ID;
-
+    unsigned identities;
+    unsigned folding;
+    unsigned reduction;
     LocalOpts() : BasicBlockPass(ID) { }
     ~LocalOpts() { }
 
@@ -26,21 +28,44 @@ namespace {
     }
 
     bool doInitialization(Module &M) override {
-
+      identities = 0;
+      folding = 0;
+      reduction = 0;
       return false;
     }
 
     bool doFinalization(Module &M) {
-
+      outs() << "Transformations applied:\n";
+      outs() << "Algebraic identities: " << identities << "\n";
+      outs() << "Constant folding: " << folding << "\n";
+      outs() << "Strength reduction: " << reduction << "\n";
       return false;
     }
 
     bool runOnBasicBlock(BasicBlock &BB) override {
       bool wasModified = false;
 
+      for (auto& I : BB) {
+        switch (I.getOpcode()) {
+          case Instruction::Add:
+          case Instruction::FAdd:
+          case Instruction::Sub:
+          case Instruction::FSub:
+          case Instruction::Mul:
+          case Instruction::FMul:
+          case Instruction::UDiv:
+          case Instruction::SDiv:
+          case Instruction::FDiv:
+          {
+            break;
+          }
+          default: break;
+        }  // end switch for opcode
+      }  // end I for loop
+      
       return wasModified;
     }
-    
+
   };
 }
 
