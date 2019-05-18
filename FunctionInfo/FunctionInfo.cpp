@@ -18,6 +18,7 @@ namespace {
   class FunctionInfo : public FunctionPass {
   public:
     static char ID;
+    // struct to keep track of numbers to output
     typedef struct data_t
     {
       bool varArgs = false;
@@ -30,6 +31,8 @@ namespace {
       size_t numBrCond = 0;
       size_t numBrUnCond = 0;
     } Data;
+
+    // map from function name to output data
     std::unordered_map<std::string, Data> funcMap;
 
     FunctionInfo() : FunctionPass(ID) { }
@@ -44,6 +47,7 @@ namespace {
     bool doInitialization(Module &M) override {
       outs() << "Name, \tArgs, \tCalls, \tBlocks, \tInsts, \tAdd/Sub, \tMul/Div, \tBr(Cond), \tBr(UnCond)\n";
 
+      // initialize the map
       for (auto& F : M) {
         std::string fName = F.getName();
         funcMap[fName] = Data();
@@ -52,6 +56,7 @@ namespace {
       return false;
     }
 
+    // print all the data
     bool doFinalization(Module &M) {
       for (auto& F : M) {
 
@@ -121,7 +126,9 @@ namespace {
               break;
             }
             /*
-              Exit Instructions:: I will just look at Br eventhough others could also be considered branches
+              Exit Instructions:: Eventhough others could also be considered branches
+              I will just look at Br 
+
               Ret
               Br
               Switch
@@ -145,6 +152,8 @@ namespace {
               break;
             }
 
+            // for all call instructions look at the name of the called function
+            // update its call count
             case Instruction::Invoke:
             case Instruction::Call:
             {
